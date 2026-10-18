@@ -1,0 +1,19 @@
+{
+  "name": "radha-catering",
+  "version": "1.0.0",
+  "description": "Authentic Pure Vegetarian Home Catering Website for Radha Catering in Powell, OH - Built by Sphire Solution LLC",
+  "main": "index.html",
+  "scripts": {
+    "start": "python server.py",
+    "build": "echo 'Static site ready for deployment'"
+  },
+  "keywords": [
+    "catering",
+    "pure-vegetarian",
+    "indian-food",
+    "powell-ohio",
+    "hostinger"
+  ],
+  "author": "Sphire Solution LLC",
+  "license": "ISC"
+}
