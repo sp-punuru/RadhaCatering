@@ -154,8 +154,12 @@
       <form id="admin-login-form">
         <div class="form-group" style="text-align: left;">
           <label class="form-label" for="admin-password">Owner Passcode</label>
-          <input type="password" id="admin-password" class="form-control" placeholder="Enter admin passcode" required autofocus />
-          <span style="font-size: 0.78rem; color: #6c757d; margin-top: 4px; display: block;">Default passcode: <code>RadhaAdmin2024</code></span>
+          <div style="position: relative;">
+            <input type="password" id="admin-password" class="form-control" placeholder="Enter owner passcode" required autofocus style="padding-right: 2.75rem;" />
+            <button type="button" id="toggle-login-password" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #6c757d; cursor: pointer; padding: 4px;" title="Show/Hide Passcode">
+              <i class="fa-solid fa-eye" id="login-eye-icon"></i>
+            </button>
+          </div>
         </div>
 
         <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 1rem;">
@@ -398,6 +402,42 @@
             </button>
           </form>
         </div>
+
+        <!-- Security & Passcode Settings Card -->
+        <div class="admin-card" style="max-width: 800px; margin-top: 1.5rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+            <div style="width: 38px; height: 38px; background: #fff3e6; color: #c25e00; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.15rem;">
+              <i class="fa-solid fa-key"></i>
+            </div>
+            <div>
+              <h2 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 2px;">Change Admin Passcode</h2>
+              <p style="color: var(--text-muted); font-size: 0.85rem;">Set a custom password to protect your Admin Dashboard.</p>
+            </div>
+          </div>
+
+          <form id="change-password-form" style="margin-top: 1.25rem;">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="new-admin-password">New Passcode</label>
+                <div style="position: relative;">
+                  <input type="password" id="new-admin-password" class="form-control" placeholder="Enter new passcode" required style="padding-right: 2.75rem;" />
+                  <button type="button" id="toggle-new-password" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #6c757d; cursor: pointer; padding: 4px;" title="Show/Hide">
+                    <i class="fa-solid fa-eye" id="new-pass-eye-icon"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="confirm-admin-password">Confirm New Passcode</label>
+                <input type="password" id="confirm-admin-password" class="form-control" placeholder="Re-enter new passcode" required />
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-secondary">
+              <i class="fa-solid fa-lock"></i> Update Passcode
+            </button>
+          </form>
+        </div>
+      </div>
       <div style="text-align: center; padding: 2rem 0 1rem; color: #6c757d; font-size: 0.85rem; border-top: 1px solid #e9ecef; margin-top: 2rem;">
         Custom Built for Radha Catering by <strong style="color: #c25e00;">Sphire Solution LLC</strong>, Delaware, OH
       </div>

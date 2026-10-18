@@ -9,8 +9,8 @@ let currentAdminData = null;
 let editingItemId = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
-  initAuth();
   await loadAdminData();
+  initAuth();
   setupEventListeners();
   renderAdminUI();
 });
@@ -32,11 +32,30 @@ function initAuth() {
     if (dashSection) dashSection.style.display = 'none';
   }
 
+  // Eye toggle for login password field
+  const toggleLoginBtn = document.getElementById('toggle-login-password');
+  const loginPassInput = document.getElementById('admin-password');
+  const loginEyeIcon = document.getElementById('login-eye-icon');
+  if (toggleLoginBtn && loginPassInput && loginEyeIcon) {
+    toggleLoginBtn.addEventListener('click', () => {
+      if (loginPassInput.type === 'password') {
+        loginPassInput.type = 'text';
+        loginEyeIcon.classList.remove('fa-eye');
+        loginEyeIcon.classList.add('fa-eye-slash');
+      } else {
+        loginPassInput.type = 'password';
+        loginEyeIcon.classList.remove('fa-eye-slash');
+        loginEyeIcon.classList.add('fa-eye');
+      }
+    });
+  }
+
   if (loginForm) {
     loginForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const enteredPass = document.getElementById('admin-password').value.trim();
-      const storedPass = localStorage.getItem('radha_admin_pass') || ADMIN_PASSCODE;
+      const serverPass = currentAdminData && currentAdminData.adminPasscode;
+      const storedPass = serverPass || localStorage.getItem('radha_admin_pass') || ADMIN_PASSCODE;
 
       if (enteredPass === storedPass) {
         sessionStorage.setItem('radha_admin_logged', 'true');
@@ -45,7 +64,7 @@ function initAuth() {
         if (window.showToast) window.showToast('Welcome back, Radha Admin!', 'success');
         renderAdminUI();
       } else {
-        alert('Incorrect Password. Please try again.');
+        alert('Incorrect Passcode. Please check and try again.');
       }
     });
   }
@@ -167,6 +186,59 @@ function setupEventListeners() {
   const infoForm = document.getElementById('business-info-form');
   if (infoForm) {
     infoForm.addEventListener('submit', handleSaveBusinessInfo);
+  }
+
+  // Toggle New Password Visibility
+  const toggleNewBtn = document.getElementById('toggle-new-password');
+  const newPassInput = document.getElementById('new-admin-password');
+  const newEyeIcon = document.getElementById('new-pass-eye-icon');
+  if (toggleNewBtn && newPassInput && newEyeIcon) {
+    toggleNewBtn.addEventListener('click', () => {
+      if (newPassInput.type === 'password') {
+        newPassInput.type = 'text';
+        newEyeIcon.classList.remove('fa-eye');
+        newEyeIcon.classList.add('fa-eye-slash');
+      } else {
+        newPassInput.type = 'password';
+        newEyeIcon.classList.remove('fa-eye-slash');
+        newEyeIcon.classList.add('fa-eye');
+      }
+    });
+  }
+
+  // Change Password Form Submit
+  const changePassForm = document.getElementById('change-password-form');
+  if (changePassForm) {
+    changePassForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newPass = document.getElementById('new-admin-password').value.trim();
+      const confirmPass = document.getElementById('confirm-admin-password').value.trim();
+
+      if (!newPass) {
+        alert('Please enter a new passcode.');
+        return;
+      }
+      if (newPass.length < 4) {
+        alert('Passcode should be at least 4 characters.');
+        return;
+      }
+      if (newPass !== confirmPass) {
+        alert('Passcodes do not match. Please re-enter.');
+        return;
+      }
+
+      localStorage.setItem('radha_admin_pass', newPass);
+      if (currentAdminData) {
+        currentAdminData.adminPasscode = newPass;
+        saveChangesLocally();
+      }
+      changePassForm.reset();
+      if (window.showToast) {
+        window.showToast('Passcode updated! Remember to click "Save All Changes" to save to server.');
+      } else {
+        alert('Passcode updated! Click "Save All Changes" to save to server.');
+      }
+    });
   }
 
   // Item Search in Admin

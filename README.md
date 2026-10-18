@@ -82,6 +82,7 @@ Open `https://yourdomain.com` in your web browser!
    - **To Upload a Picture:** In the Edit/Add modal, click **Choose File** under "Upload Image File" to select a photo from your computer or phone. The photo will automatically upload and preview.
    - **To Update the Homepage Scrolling Carousel:** Click the **Homepage Scrolling Carousel** tab, where you can add new slide photos, update taglines, or remove photos.
    - **To Save to Server:** Click the green **"Save All Changes"** button at the top right. This immediately writes the updates to the server.
+   - **To Change Passcode:** In the **Business Info & Settings** tab, scroll to **Change Admin Passcode** to set your own private password anytime.
    - **Backup:** You can also click **Backup JSON** to download a copy of `menu.json` to your computer anytime.
 
 ---
