@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard | Radha Catering</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>" />
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <link rel="stylesheet" href="css/style.css" />
+
+  <style>
+    .admin-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem;
+    }
+    .admin-card {
+      background: #ffffff;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 1.75rem;
+      margin-bottom: 2rem;
+    }
+    .admin-tabs {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .admin-tab-btn {
+      padding: 0.75rem 1.25rem;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.95rem;
+      transition: var(--transition);
+    }
+    .admin-tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      background: rgba(194, 94, 0, 0.04);
+    }
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    .admin-table th, .admin-table td {
+      padding: 0.85rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid #e9ecef;
+      vertical-align: middle;
+    }
+    .admin-table th {
+      background: #f8f9fa;
+      font-size: 0.825rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #495057;
+    }
+    /* Modal styles */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.55);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+    .modal-box {
+      background: #ffffff;
+      width: 100%;
+      max-width: 680px;
+      border-radius: var(--radius-md);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      padding: 2rem;
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #6c757d;
+    }
+    .image-preview-box {
+      width: 100%;
+      height: 180px;
+      border: 2px dashed #ced4da;
+      border-radius: var(--radius-sm);
+      margin-top: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: #f8f9fa;
+      position: relative;
+    }
+    .image-preview-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body style="background: #f4f6f8;">
+
+  <!-- ========================================================================
+       LOGIN VIEW (Shown when unauthenticated)
+       ======================================================================== -->
+  <div id="admin-login-view" style="display: flex; min-height: 100vh; align-items: center; justify-content: center; padding: 1.5rem;">
+    <div style="background: #ffffff; width: 100%; max-width: 440px; padding: 2.5rem; border-radius: var(--radius-md); box-shadow: var(--shadow-lg); border: 1px solid var(--border); text-align: center;">
+      <div class="logo-symbol" style="margin: 0 auto 1.25rem;">
+        <i class="fa-solid fa-lock"></i>
+      </div>
+      <h2 style="font-family: var(--font-heading); font-size: 1.75rem; margin-bottom: 0.35rem; color: #212529;">
+        Radha Catering Admin
+      </h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.75rem;">
+        Enter your owner passcode to update menu items, prices, and upload dish pictures.
+      </p>
+
+      <form id="admin-login-form">
+        <div class="form-group" style="text-align: left;">
+          <label class="form-label" for="admin-password">Owner Passcode</label>
+          <input type="password" id="admin-password" class="form-control" placeholder="Enter admin passcode" required autofocus />
+          <span style="font-size: 0.78rem; color: #6c757d; margin-top: 4px; display: block;">Default passcode: <code>RadhaAdmin2024</code></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 1rem;">
+          <i class="fa-solid fa-right-to-bracket"></i> Login to Dashboard
+        </button>
+      </form>
+
+      <div style="margin-top: 1.5rem; border-top: 1px solid #e9ecef; padding-top: 1rem;">
+        <a href="index.html" style="font-size: 0.85rem; color: #6c757d;">
+          <i class="fa-solid fa-arrow-left"></i> Return to Public Website
+        </a>
+        <div style="font-size: 0.78rem; color: #adb5bd; margin-top: 8px;">
+          Developed by <strong style="color: #495057;">Sphire Solution LLC</strong>, Delaware, OH
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       ADMIN DASHBOARD VIEW (Shown when authenticated)
+       ======================================================================== -->
+  <div id="admin-dashboard-view" style="display: none;">
+    
+    <!-- Admin Top Bar -->
+    <header style="background: #ffffff; border-bottom: 1px solid var(--border); padding: 1rem 0; position: sticky; top: 0; z-index: 100;">
+      <div class="admin-container" style="padding: 0 1.25rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: gap; gap: 1rem;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div class="logo-symbol" style="width: 38px; height: 38px; font-size: 1.15rem;">
+            <i class="fa-solid fa-leaf"></i>
+          </div>
+          <div>
+            <h1 style="font-size: 1.25rem; font-weight: 800; color: #c25e00; line-height: 1;">Radha Catering</h1>
+            <span style="font-size: 0.75rem; color: #6c757d; font-weight: 600;">Control Panel • Powell, OH</span>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;">
+          <a href="index.html" target="_blank" class="btn btn-outline btn-sm">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> View Live Site
+          </a>
+          <button type="button" id="download-backup-btn" class="btn btn-outline btn-sm" title="Download backup menu.json file">
+            <i class="fa-solid fa-download"></i> Backup JSON
+          </button>
+          <button type="button" id="save-all-btn" class="btn btn-primary btn-sm" style="background: #166534; border-color: #166534;">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Save All Changes
+          </button>
+          <button type="button" id="admin-logout-btn" class="btn btn-sm" style="background: #f8f9fa; border: 1px solid #ced4da; color: #495057;">
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="admin-container">
+      
+      <!-- Stats Overview -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-bottom: 2rem;">
+        <div class="admin-card" style="margin-bottom: 0; padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
+          <div style="width: 48px; height: 48px; background: #fff3e6; color: #c25e00; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+            <i class="fa-solid fa-bowl-food"></i>
+          </div>
+          <div>
+            <span style="font-size: 0.8rem; color: #6c757d; font-weight: 600; text-transform: uppercase;">Menu Items</span>
+            <div id="stat-total-items" style="font-size: 1.5rem; font-weight: 800; color: #212529;">0</div>
+          </div>
+        </div>
+
+        <div class="admin-card" style="margin-bottom: 0; padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
+          <div style="width: 48px; height: 48px; background: #e8f5e9; color: #166534; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+            <i class="fa-solid fa-images"></i>
+          </div>
+          <div>
+            <span style="font-size: 0.8rem; color: #6c757d; font-weight: 600; text-transform: uppercase;">Slider Photos</span>
+            <div id="stat-total-slides" style="font-size: 1.5rem; font-weight: 800; color: #212529;">0</div>
+          </div>
+        </div>
+
+        <div class="admin-card" style="margin-bottom: 0; padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
+          <div style="width: 48px; height: 48px; background: #e0f2fe; color: #0284c7; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+            <i class="fa-solid fa-tag"></i>
+          </div>
+          <div>
+            <span style="font-size: 0.8rem; color: #6c757d; font-weight: 600; text-transform: uppercase;">Avg. Half Tray</span>
+            <div id="stat-avg-half" style="font-size: 1.5rem; font-weight: 800; color: #212529;">$0</div>
+          </div>
+        </div>
+
+        <div class="admin-card" style="margin-bottom: 0; padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
+          <div style="width: 48px; height: 48px; background: #f3e8ff; color: #9333ea; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+            <i class="fa-solid fa-server"></i>
+          </div>
+          <div>
+            <span style="font-size: 0.8rem; color: #6c757d; font-weight: 600; text-transform: uppercase;">Hostinger Status</span>
+            <div style="font-size: 0.95rem; font-weight: 700; color: #166534;"><i class="fa-solid fa-circle-check"></i> Ready to Save</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="admin-tabs">
+        <button type="button" class="admin-tab-btn active" data-tab="tab-menu-items">
+          <i class="fa-solid fa-utensils"></i> Menu Dishes & Prices
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="tab-slider-photos">
+          <i class="fa-solid fa-sliders"></i> Homepage Scrolling Carousel
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="tab-business-info">
+          <i class="fa-solid fa-gear"></i> Business Info & Contact
+        </button>
+      </div>
+
+      <!-- ====================================================================
+           TAB 1: MENU DISHES & PRICES
+           ==================================================================== -->
+      <div id="tab-menu-items" class="admin-tab-content">
+        <div class="admin-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+            <div>
+              <h2 style="font-size: 1.4rem; font-weight: 800;">Manage Menu Dishes & Tray Prices</h2>
+              <p style="color: var(--text-muted); font-size: 0.9rem;">Add new items, update Half Tray / Full Tray prices, descriptions, and upload dish pictures.</p>
+            </div>
+
+            <div style="display: flex; gap: 0.75rem; align-items: center;">
+              <input type="text" id="admin-item-search" class="form-control" placeholder="Search dish..." style="width: 220px;" />
+              <button type="button" id="add-item-modal-btn" class="btn btn-primary btn-sm">
+                <i class="fa-solid fa-plus"></i> Add New Dish
+              </button>
+            </div>
+          </div>
+
+          <div style="overflow-x: auto;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Photo</th>
+                  <th>Dish Title & Details</th>
+                  <th>Category</th>
+                  <th>Half Tray</th>
+                  <th>Full Tray</th>
+                  <th>Status</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-items-table-body">
+                <!-- Rendered by js/admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           TAB 2: HOMEPAGE SCROLLING CAROUSEL
+           ==================================================================== -->
+      <div id="tab-slider-photos" class="admin-tab-content" style="display: none;">
+        <div class="admin-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+            <div>
+              <h2 style="font-size: 1.4rem; font-weight: 800;">Homepage Scrolling Carousel Photos</h2>
+              <p style="color: var(--text-muted); font-size: 0.9rem;">Manage the continuous multi-photo carousel on the homepage (inspired by Namaste Biryani).</p>
+            </div>
+
+            <button type="button" id="add-slider-modal-btn" class="btn btn-primary btn-sm">
+              <i class="fa-solid fa-plus"></i> Add Slide Photo
+            </button>
+          </div>
+
+          <div style="overflow-x: auto;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Photo</th>
+                  <th>Dish Title & Tagline</th>
+                  <th>Badge</th>
+                  <th>Menu Link</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-slider-table-body">
+                <!-- Rendered by js/admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           TAB 3: BUSINESS INFO & SETTINGS
+           ==================================================================== -->
+      <div id="tab-business-info" class="admin-tab-content" style="display: none;">
+        <div class="admin-card" style="max-width: 800px;">
+          <h2 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 0.35rem;">Business Settings & Contact</h2>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.75rem;">Update the public phone number, WhatsApp link, location, and announcement bar.</p>
+
+          <form id="business-info-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="info-name">Business Name</label>
+                <input type="text" id="info-name" class="form-control" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="info-citystate">City, State</label>
+                <input type="text" id="info-citystate" class="form-control" placeholder="Powell, OH" required />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="info-phone">Phone Display Number</label>
+                <input type="text" id="info-phone" class="form-control" placeholder="+1 (978) 652-6164" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="info-whatsapp">WhatsApp Phone Digits (Numbers only)</label>
+                <input type="text" id="info-whatsapp" class="form-control" placeholder="19786526164" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="info-email">Contact Email</label>
+              <input type="email" id="info-email" class="form-control" placeholder="contact@radhacatering.com" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="info-serviceareas">Service Areas</label>
+              <input type="text" id="info-serviceareas" class="form-control" placeholder="Powell, Dublin, Lewis Center, Columbus, Worthington" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="info-announcement">Top Bar Announcement Banner</label>
+              <input type="text" id="info-announcement" class="form-control" placeholder="Now accepting weekend catering orders..." />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="info-noticetext">Advance Notice Policy</label>
+              <textarea id="info-noticetext" class="form-control" rows="2"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg">
+              <i class="fa-solid fa-floppy-disk"></i> Save Business Settings
+            </button>
+          </form>
+        </div>
+      <div style="text-align: center; padding: 2rem 0 1rem; color: #6c757d; font-size: 0.85rem; border-top: 1px solid #e9ecef; margin-top: 2rem;">
+        Custom Built for Radha Catering by <strong style="color: #c25e00;">Sphire Solution LLC</strong>, Delaware, OH
+      </div>
+    </main>
+  </div>
+
+  <!-- ========================================================================
+       MODAL: ADD / EDIT DISH
+       ======================================================================== -->
+  <div id="item-modal-backdrop" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="item-modal-title" style="font-family: var(--font-heading); font-size: 1.5rem; color: #212529;">Add New Dish</h3>
+        <button type="button" class="modal-close" onclick="closeItemModal()">&times;</button>
+      </div>
+
+      <form id="item-modal-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="item-title">Dish Title *</label>
+            <input type="text" id="item-title" class="form-control" placeholder="e.g. Shahi Paneer" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="item-category">Category *</label>
+            <select id="item-category" class="form-control" required>
+              <option value="starters">Appetizers & Starters</option>
+              <option value="curries">Main Course Curries</option>
+              <option value="rice">Biryani & Rice</option>
+              <option value="breads">Breads & Accompaniments</option>
+              <option value="desserts">Desserts & Sweets</option>
+              <option value="packages">Party Packages</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="item-desc">Description & Ingredients</label>
+          <textarea id="item-desc" class="form-control" rows="2" placeholder="Brief appetizing description..."></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="item-half-price">Half Tray Price ($) *</label>
+            <input type="number" id="item-half-price" class="form-control" min="0" step="1" placeholder="e.g. 65" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="item-full-price">Full Tray Price ($) *</label>
+            <input type="number" id="item-full-price" class="form-control" min="0" step="1" placeholder="e.g. 120" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="item-half-serves">Half Tray Serves</label>
+            <input type="text" id="item-half-serves" class="form-control" value="10-12 guests" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="item-full-serves">Full Tray Serves</label>
+            <input type="text" id="item-full-serves" class="form-control" value="20-25 guests" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="item-badge">Badge / Tag (Optional)</label>
+          <input type="text" id="item-badge" class="form-control" placeholder="e.g. Bestseller, Chef Special, Signature" />
+        </div>
+
+        <!-- Image Upload & URL -->
+        <div class="form-group" style="background: #faf6f0; padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid #e9ecef;">
+          <label class="form-label" style="display: flex; justify-content: space-between;">
+            <span><i class="fa-solid fa-camera"></i> Dish Picture</span>
+            <span id="upload-status-indicator" style="font-size: 0.8rem; color: #166534; font-weight: 600;"></span>
+          </label>
+          
+          <div style="margin-bottom: 0.75rem;">
+            <label style="font-size: 0.85rem; color: #495057; display: block; margin-bottom: 4px;">Option A: Upload Image File (JPG, PNG, WEBP)</label>
+            <input type="file" id="item-image-file" accept="image/*" class="form-control" style="background: #fff;" />
+          </div>
+
+          <div>
+            <label style="font-size: 0.85rem; color: #495057; display: block; margin-bottom: 4px;">Option B: Or Enter Image URL</label>
+            <input type="url" id="item-image-url" class="form-control" placeholder="https://images.unsplash.com/..." style="background: #fff;" />
+          </div>
+
+          <div class="image-preview-box">
+            <img id="item-image-preview" src="" alt="Preview" style="display: none;" />
+            <span style="color: #adb5bd; font-size: 0.85rem;" id="item-preview-placeholder">No image selected</span>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 1.5rem; margin: 1.25rem 0;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; cursor: pointer;">
+            <input type="checkbox" id="item-jain" /> Jain Option Available
+          </label>
+          <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; cursor: pointer;">
+            <input type="checkbox" id="item-available" checked /> Available for Catering
+          </label>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; border-top: 1px solid var(--border); padding-top: 1.25rem;">
+          <button type="button" class="btn btn-outline" onclick="closeItemModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-check"></i> Save Dish
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL: ADD SLIDER PHOTO
+       ======================================================================== -->
+  <div id="slider-modal-backdrop" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 style="font-family: var(--font-heading); font-size: 1.5rem; color: #212529;">Add Photo to Homepage Carousel</h3>
+        <button type="button" class="modal-close" onclick="closeSliderModal()">&times;</button>
+      </div>
+
+      <form id="slider-modal-form">
+        <div class="form-group">
+          <label class="form-label" for="slider-title">Dish Title *</label>
+          <input type="text" id="slider-title" class="form-control" placeholder="e.g. Hyderabadi Veg Dum Biryani" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="slider-tagline">Appetizing Tagline *</label>
+          <input type="text" id="slider-tagline" class="form-control" placeholder="e.g. Fragrant saffron basmati rice with slow-cooked vegetables" required />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="slider-category">Category Badge</label>
+            <input type="text" id="slider-category" class="form-control" placeholder="Biryani & Rice" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="slider-link">Click Link</label>
+            <input type="text" id="slider-link" class="form-control" value="menu.html#rice" />
+          </div>
+        </div>
+
+        <!-- Slider Image Upload -->
+        <div class="form-group" style="background: #faf6f0; padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid #e9ecef;">
+          <label class="form-label"><i class="fa-solid fa-camera"></i> Slide Image</label>
+          
+          <div style="margin-bottom: 0.75rem;">
+            <label style="font-size: 0.85rem; color: #495057; display: block; margin-bottom: 4px;">Upload Image File</label>
+            <input type="file" id="slider-image-file" accept="image/*" class="form-control" style="background: #fff;" />
+          </div>
+
+          <div>
+            <label style="font-size: 0.85rem; color: #495057; display: block; margin-bottom: 4px;">Or Image URL</label>
+            <input type="url" id="slider-image-url" class="form-control" placeholder="https://..." style="background: #fff;" required />
+          </div>
+
+          <div class="image-preview-box">
+            <img id="slider-image-preview" src="" alt="Preview" style="display: none;" />
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; border-top: 1px solid var(--border); padding-top: 1.25rem;">
+          <button type="button" class="btn btn-outline" onclick="closeSliderModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> Add to Carousel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/main.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
